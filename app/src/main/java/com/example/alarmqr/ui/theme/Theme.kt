@@ -8,29 +8,19 @@ import androidx.compose.runtime.Composable
 
 
 private val DarkColorScheme = darkColorScheme(
-    primary = DarkGray,
-    secondary = LightGray,
-    tertiary = Green,
-)
-
-private val LightColorScheme = lightColorScheme(
+    background = DarkGray,
     primary = White,
     secondary = LightGray,
     tertiary = Green,
+    onTertiary = DarkGreen
 )
 
 @Composable
 fun AlarmQRTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
-    val colorScheme = when {
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
-    }
-
     MaterialTheme(
-        colorScheme = colorScheme,
+        colorScheme = DarkColorScheme,
         typography = Typography,
         content = content
     )
