@@ -9,11 +9,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -34,13 +36,18 @@ import java.util.Calendar
 import java.util.Date
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import java.text.SimpleDateFormat
 import java.util.Locale
+import com.example.alarmqr.ui.theme.SuccessText
+import com.example.alarmqr.ui.theme.ErrorText
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddAlarmView(){
     val titleState = rememberTextFieldState()
+    val alarmOffset = rememberTextFieldState()
     val currentTime = Calendar.getInstance()
     val timePickerState = rememberTimePickerState(
         initialHour = currentTime.get(Calendar.HOUR_OF_DAY),
@@ -52,6 +59,8 @@ fun AddAlarmView(){
     }
     val datePickerState = rememberDatePickerState(tomorrow.timeInMillis)
     var showDialog by remember { mutableStateOf(false) }
+    var qrErrorState = "QR Code not scanned"
+    var qrSuccessState = "QR Code scanned successfully"
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -65,13 +74,17 @@ fun AddAlarmView(){
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(50.dp))
             OutlinedTextField(
                 state = titleState,
                 label = { Text("Alarm Title") },
                 lineLimits = TextFieldLineLimits.SingleLine
             )
-            Spacer(modifier = Modifier.height(25.dp))
+
+            Spacer(modifier = Modifier.height(40.dp))
+            HorizontalDivider(thickness = 2.dp)
+            Spacer(modifier = Modifier.height(40.dp))
+
             TimeInput(
                 state = timePickerState,
                 colors = TimePickerDefaults.colors(
@@ -82,7 +95,8 @@ fun AddAlarmView(){
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth(0.7f)) {
                 Text("${
                     SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(Date(datePickerState.selectedDateMillis ?: 0L))
-                }")
+                    }",
+                )
                 Spacer(modifier = Modifier.width(20.dp))
                 WideButton("Change Date", {showDialog = true})
             }
@@ -100,8 +114,40 @@ fun AddAlarmView(){
                 }
             }
 
-            Spacer(modifier = Modifier.height(140.dp))
+            Spacer(modifier = Modifier.height(40.dp))
+            HorizontalDivider(thickness = 2.dp)
+            Spacer(modifier = Modifier.height(40.dp))
+
+            Text(
+                text = "Enter time for next alarm and scan QR Code that will disable the alarm",
+                modifier = Modifier.fillMaxWidth(0.7f),
+                textAlign = TextAlign.Center
+            )
+            Spacer(modifier = Modifier.height(30.dp))
+            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth(0.7f)) {
+                OutlinedTextField(
+                    state = alarmOffset,
+                    label = { Text("Time (s)") },
+                    lineLimits = TextFieldLineLimits.SingleLine,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    modifier = Modifier.fillMaxWidth(0.5f)
+                )
+                Spacer(modifier = Modifier.width(20.dp))
+                WideButton("QR Code", {})
+            }
+            Spacer(modifier = Modifier.height(30.dp))
+            Text(
+                text = qrErrorState,
+                textAlign = TextAlign.Center,
+                color = ErrorText
+            )
+
+            Spacer(modifier = Modifier.height(40.dp))
             FitButton("Add", {})
         }
     }
+}
+
+fun ValidateOffset(offsetText: String): Int {
+    return offsetText.toIntOrNull() ?: 0
 }
