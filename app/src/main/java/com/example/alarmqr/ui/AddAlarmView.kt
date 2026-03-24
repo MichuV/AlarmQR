@@ -25,6 +25,7 @@ import androidx.compose.material3.TimePickerDefaults
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -36,12 +37,14 @@ import java.util.Calendar
 import java.util.Date
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import java.text.SimpleDateFormat
 import java.util.Locale
 import com.example.alarmqr.ui.theme.SuccessText
 import com.example.alarmqr.ui.theme.ErrorText
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -59,8 +62,14 @@ fun AddAlarmView(){
     }
     val datePickerState = rememberDatePickerState(tomorrow.timeInMillis)
     var showDialog by remember { mutableStateOf(false) }
-    var qrErrorState = "QR Code not scanned"
-    var qrSuccessState = "QR Code scanned successfully"
+    val qrErrorState = "QR Code not scanned"
+    val qrSuccessState = "QR Code scanned successfully"
+    val focusManager = LocalFocusManager.current
+
+    LaunchedEffect(Unit) {
+        delay(100)
+        focusManager.clearFocus()
+    }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -148,6 +157,6 @@ fun AddAlarmView(){
     }
 }
 
-fun ValidateOffset(offsetText: String): Int {
+fun validateOffset(offsetText: String): Int {
     return offsetText.toIntOrNull() ?: 0
 }

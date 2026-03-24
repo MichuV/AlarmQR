@@ -7,14 +7,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.alarmqr.ui.theme.WideButton
 
 @Composable
-fun MainView() {
+fun MainView(navController: NavController) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.background
@@ -25,8 +25,11 @@ fun MainView() {
                 .padding(16.dp)
         ) {
             Spacer(modifier = Modifier.height(16.dp))
-            WideButton("Add new alarm", {})
+            WideButton("Add new alarm", {
+                navController.navigate("addAlarm")
+            })
             Spacer(modifier = Modifier.height(16.dp))
+            WideButton("Generate QR Code", {})
             AlarmsList()
         }
     }
